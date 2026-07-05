@@ -1,10 +1,5 @@
 import argparse
 
-parser = argparse.ArgumentParser()
-parser.add_argument("input")
-parser.add_argument("output")
-args = parser.parse_args()
-
 def unpack_tk4(data: bytes) -> bytes:
     src = 4
     dst = bytearray(b"\x00" * 0x800)
@@ -42,17 +37,21 @@ def unpack_tk4(data: bytes) -> bytes:
 
     return bytes(dst[0x800:])
 
-print("-- Opening", args.input)
+def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("input")
+    parser.add_argument("output")
+    args = parser.parse_args()
 
+    print("-- Opening", args.input)
+    with open(args.input, "rb") as f:
+        data = f.read()
+    print("-- input file size:", len(data))
+    out = unpack_tk4(data)
+    print("-- decompression output size:", len(out))
+    with open(args.output, "wb") as f:
+        written = f.write(out)
+        print("-- written", written, "bytes into output file")
 
-with open(args.input, "rb") as f:
-    data = f.read()
-
-print("-- input file size:", len(data))
-
-out = unpack_tk4(data)
-print("-- decompression output size:", len(out))
-
-with open(args.output, "wb") as f:
-    written = f.write(out)
-    print("-- written", written, "bytes into output file")
+if __name__ == "__main__":
+    main()

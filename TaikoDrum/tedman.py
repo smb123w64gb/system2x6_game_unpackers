@@ -10,17 +10,6 @@
 import argparse
 from collections import defaultdict
 
-parser = argparse.ArgumentParser()
-
-mode = parser.add_mutually_exclusive_group(required=True)
-mode.add_argument("-x", "--extract", action="store_true")
-mode.add_argument("-c", "--compress", action="store_true")
-
-parser.add_argument("input")
-parser.add_argument("output")
-
-args = parser.parse_args()
-
 def decompr(data):
     if data[:4] != b'\x00\x00\x10\x00':
         raise RuntimeError(
@@ -175,16 +164,26 @@ def compr(data, load_address=0x00100000):
 
     return bytes(out)
 
-print("-- Opening", args.input)
 
-with open(args.input, "rb") as f:
-    data = f.read()
+def main():
+    parser = argparse.ArgumentParser()
+    mode = parser.add_mutually_exclusive_group(required=True)
+    mode.add_argument("-x", "--extract", action="store_true")
+    mode.add_argument("-c", "--compress", action="store_true")
+    parser.add_argument("input")
+    parser.add_argument("output")
+    args = parser.parse_args()
 
-if args.extract:
-    out = decompr(data)
-elif args.compress:
-    out = compr(data)
+    print("-- Opening", args.input)
+    with open(args.input, "rb") as f:
+        data = f.read()
+    if args.extract:
+        out = decompr(data)
+    elif args.compress:
+        out = compr(data)
+    with open(args.output, "wb") as f:
+        written = f.write(out)
+        print(f"-- output: written 0x{written:X} bytes")
 
-with open(args.output, "wb") as f:
-    written = f.write(out)
-    print(f"-- output: written 0x{written:X} bytes")
+if __name__ == "__main__":
+    main()
