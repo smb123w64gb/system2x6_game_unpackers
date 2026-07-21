@@ -10,8 +10,6 @@ from sc3man import unpack_sc3game,pack_sc3game
 HEADER_SIZE = 0x40
 ALIGN = 0x40
 
-
-
 def align(value):
     return (value + ALIGN - 1) & ~(ALIGN - 1)
 
@@ -116,8 +114,7 @@ def build_archive(indir, outfile):
 
 def main():
 
-    parser = argparse.ArgumentParser(description="Script for handling SYSTEM256 TEKKEN5 IRX package (eg:'IRXPK246.302')")
-
+    parser = argparse.ArgumentParser(description="Script for handling SYSTEM246 SOULCALIBUR3 ARCADE BATTLE IRX package (eg:'IRXPK246.301')")
     sub = parser.add_subparsers(dest="cmd")
 
     p = sub.add_parser("list")
